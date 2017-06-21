@@ -1,0 +1,39 @@
+#!/usr/bin/env node
+
+const request = require('request')
+const chalk = require('chalk')
+const logger = require('../lib/logger')
+const ora = require('ora')
+
+console.log()
+
+const spinner = ora('正在联网获取...')
+spinner.start()
+request({
+    url: 'https://api.github.com/users/mlive-templates/repos',
+    headers: {
+        'User-Agent': 'donglegend'
+    }
+}, function (error, res, body) {
+    spinner.stop()
+    if (error) {
+        logger.error(error)
+    }
+    if (!error && res.statusCode == 200) {
+        const info = JSON.parse(body);
+        if (Array.isArray(info)) {
+            console.log('  Available official templates:')
+            console.log()
+            info.forEach(function (repo) {
+                console.log(
+                    '  ' + chalk.yellow('★') +
+                    '  ' + chalk.blue(repo.name) +
+                    ' - ' + repo.description)
+            })
+        } else {
+            console.error(info.message)
+        }
+    } else {
+        logger.error(res.statusMessage)
+    }
+})

@@ -1,0 +1,36 @@
+{
+  "name": "mlive-cli",
+  "version": "1.0.0",
+  "description": "A simple CLI for Mtime web development",
+  "bin": {
+    "mlive": "bin/mlive",
+    "mlive-init": "bin/mlive-init",
+    "mlive-list": "bin/mlive-list"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "vue",
+    "mtime"
+  ],
+  "author": "dongsheng",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.4.1",
+    "chalk": "^1.1.3",
+    "commander": "^2.9.0",
+    "download-git-repo": "^1.0.1",
+    "inquirer": "^3.1.1",
+    "metalsmith": "^2.3.0",
+    "ora": "^1.3.0",
+    "request": "^2.81.0",
+    "rimraf": "^2.6.1",
+    "user-home": "^2.0.0"
+  }
+}

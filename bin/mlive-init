@@ -1,0 +1,121 @@
+#!/usr/bin/env node
+
+const path = require('path')
+const program = require('commander')
+const chalk = require('chalk')
+const logger = require('../lib/logger')
+const ora = require('ora')
+const home = require('user-home')
+const exists = require('fs').existsSync
+const rm = require('rimraf').sync
+const inquirer = require('inquirer')
+const downloadGitRepo = require('download-git-repo')
+const generate = require('../lib/generate')
+const {
+    isLocalPath,
+    getTemplatePath
+} = require('../lib/local-path')
+
+/**
+ * Usage.
+ */
+program
+    .usage('<template-name> [project-name]')
+    .option('-c, --clone', 'use git clone')
+    .option('--offline', 'use cached template')
+
+/**
+ * help
+ */
+program.on('--help', function () {
+    console.log('  Examples:')
+    console.log()
+    console.log(chalk.gray('    # create a new project with an mlive template'))
+    console.log('    $ mlive init webpack my-project')
+    console.log()
+})
+
+function help() {
+    program.parse(process.argv)
+    if (program.args.length < 1) return program.help()
+}
+help()
+
+var template = program.args[0]
+var rawName = program.args[1]
+var inPlace = !rawName || rawName === '.'
+var name = inPlace ? path.relative('../', process.cwd()) : rawName
+var to = path.resolve(rawName || '.')
+// 下载的项目模版路径
+var tmp = path.join(home, '.mlive-templates', template)
+console.log(tmp)
+// 是否使用本地缓存
+if (program.offline) {
+    template = tmp
+}
+
+// 本地是否已经有目录
+if (exists(to)) {
+    inquirer.prompt([{
+        type: 'confirm',
+        message: inPlace ? '是否在当前目录生成项目?' : '目录已经存在，是否继续?',
+        name: 'ok'
+    }]).then(answers => {
+        if (answers.ok) {
+            run()
+        }
+    })
+} else {
+    run()
+}
+
+/**
+ * 项目主程序，下载模版 生成项目结构
+ */
+function run() {
+
+    if (isLocalPath(template)) {
+        let templatePath = getTemplatePath(template)
+        if (exists(templatePath)) {
+            generateProject({
+                src: templatePath,
+                dest: to
+            })
+        } else {
+            logger.error(`本地模版 ${template} 不存在!`)
+        }
+    } else {
+        const officialTemplate = 'vuejs-templates/' + template
+        download(officialTemplate)
+    }
+
+}
+
+function download(template) {
+    const spinner = ora('正在下载模版...')
+    spinner.start()
+    if (exists(tmp)) {
+        rm(tmp)
+    }
+    downloadGitRepo(template, tmp, function (err) {
+        spinner.stop()
+        if (err) {
+            logger.error(chalk.red(err))
+        }
+        console.log()
+        logger.success('模版下载成功!')
+        generateProject({
+            src: tmp,
+            dest: to
+        })
+    })
+}
+
+function generateProject(conf) {
+    generate(conf, function (err, files) {
+        if (err) {
+            logger.error('生成模版失败! ' + err)
+        }
+        logger.success('初始化完成!')
+    })
+}

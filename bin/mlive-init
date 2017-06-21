@@ -85,7 +85,7 @@ function run() {
             logger.error(`本地模版 ${template} 不存在!`)
         }
     } else {
-        const officialTemplate = 'vuejs-templates/' + template
+        const officialTemplate = 'mlive-templates/' + template
         download(officialTemplate)
     }
 

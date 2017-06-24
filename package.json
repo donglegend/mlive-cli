@@ -9,11 +9,11 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "npm run dev"
+    "test": "echo \" mlive tool \""
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/donglegend/mlive-cli.git"
   },
   "keywords": [
     "vue",

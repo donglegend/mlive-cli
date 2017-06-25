@@ -1,6 +1,6 @@
 {
   "name": "mlive-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple CLI for Mtime web development",
   "bin": {
     "mlive": "bin/mlive",

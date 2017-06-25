@@ -9,7 +9,7 @@ $ npm install -g mlive-cli
 $ mlive init <temlplate-name> <project-name>
 
 Example:
-$ vue init webpack myApp
+$ mlive init webpack myApp
 
 - 查看可用模版列表
 $ mlive list
